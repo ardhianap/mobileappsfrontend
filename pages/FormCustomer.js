@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, Modal, Button, FlatList, TextInput } from 'react-native';
 import { useIsFocused } from "@react-navigation/native" 
 import SelectDropdown from 'react-native-select-dropdown';
@@ -13,15 +13,19 @@ const FormCustomer = ({ navigation }) => {
       const [products, setProducts] = useState([]);
       const tenors = Array.from({ length: 60 }, (_, index) => index + 1);
       const [insertedCustomer, setInsertedCustomer] = useState({
-          firstName   : "",
-          lastName    : "",
-          phoneNumber : "",
-          branch      : "",
-          product     : "",
-          tenor       : ""
+          firstName   : '',
+          lastName    : '',
+          phoneNumber : '',
+          branch      : '',
+          product     : '',
+          tenor       : ''
       });
       const [modalVisible, setModalVisible] = useState(false);
       const [deletedCustomerId, setDeletedCustomerId] = useState(0);
+      const dropdownProductRef = useRef({});
+      const dropdownBranchRef = useRef({});  
+      const dropdownTenorRef = useRef({});  
+  
 
       const getAllDataCustomer = async () => {
         const response = await fetch(`${ipConfig}/GetAllDataCust`);
@@ -75,13 +79,17 @@ const FormCustomer = ({ navigation }) => {
 
       const clearButton = () => {
         setInsertedCustomer({
-            firstName   : "",
-            lastName    : "",
-            phoneNumber : "",
-            branch      : "",
-            product     : "",
-            tenor       : ""
+            firstName   : '',
+            lastName    : '',
+            phoneNumber : '',
+            branch      : '',
+            product     : '',
+            tenor       : ''
         })
+        dropdownProductRef.current.reset();
+        dropdownBranchRef.current.reset();
+        dropdownTenorRef.current.reset();
+
       };
   
       useEffect(() => {
@@ -184,7 +192,8 @@ const FormCustomer = ({ navigation }) => {
                           onSelect = {(selectedItem,_) => { insertNewCustomer(selectedItem,'branch') }}
                           buttonTextAfterSelection = {(selectedItem) => { return selectedItem; }}
                           rowTextForSelection = {(customer) => customer }
-                          defaultButtonText = {'- Select Branch -'}                                        
+                          defaultButtonText = {'- Select Branch -'}
+                          ref={dropdownBranchRef}                                        
                       />  
                       <SelectDropdown
                           buttonStyle = {{ marginRight: 100, marginLeft: 100, backgroundColor: '#fff', margin:12, width: '50%', borderWidth: 2 }}
@@ -193,7 +202,8 @@ const FormCustomer = ({ navigation }) => {
                           onSelect = {(selectedItem,_) => { insertNewCustomer(selectedItem,'product') }}
                           buttonTextAfterSelection = {(selectedItem) => { return selectedItem; }}
                           rowTextForSelection = {(customer) => customer }
-                          defaultButtonText = {'- Select Product -'}                                      
+                          defaultButtonText = {'- Select Product -'}
+                          ref={dropdownProductRef}                                      
                       />  
                       <SelectDropdown
                           buttonStyle = {{ marginRight: 100, marginLeft: 100, backgroundColor: '#fff', margin:12, width: '50%', borderWidth: 2 }}
@@ -202,7 +212,8 @@ const FormCustomer = ({ navigation }) => {
                           onSelect = {(selectedItem) => { insertNewCustomer(selectedItem,'tenor') }}
                           buttonTextAfterSelection = {(selectedItem) => { return selectedItem; }}
                           rowTextForSelection = {(customer) => customer }
-                          defaultButtonText = {'- Select Tenor -'}                 
+                          defaultButtonText = {'- Select Tenor -'}
+                          ref={dropdownTenorRef}                 
                       />  
                       <View style = {{ margin: 12, width: '90%', alignItems: 'center', marginLeft: 30, marginTop: 40 }}>
                           <Button color = "#1f946d" title = "Submit" onPress = {saveDataCustomer} />
